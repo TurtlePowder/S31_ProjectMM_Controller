@@ -1,32 +1,25 @@
-A dedicated controller board for ProjectMM, designed to drive 16 LED strips with audio-reactive effects.
+ProjectMM ESP32-S31 Controller
 
-The board is based on an ESP32-S3-WROOM-3 and combines audio input, LED control, flexible power input, and an additional relay output in a compact controller.
+Custom controller board for ProjectMM, built around the ESP32-S31.
+
+The board is designed for audio-reactive lighting applications, providing dual I²S microphone inputs and 16 independent outputs for LED strips.
 
 Features
-🎛️ ESP32-S3-WROOM-3 controller
-🎤 2× I²S microphone inputs for audio-reactive lighting
-💡 16 independent LED outputs
-PWM_1 – PWM_16
-Designed for controlling 16 LED strips
-🔌 USB-C input
-Power and USB connectivity
-USB 2.0 interface
-⚡ 12 V screw-terminal power input
-On-board protection fuse
-Reverse/transient protection
-🔋 On-board voltage regulation
-12 V → 5 V
-5 V → 3.3 V
-🔁 5 V relay output
-Controlled from GPIO38
-Useful for switching external equipment or accessories
-🔘 Reset button
-🔘 Boot button
-🧪 Exposed test/programming interfaces
-🛡️ Power filtering and protection components
+ESP32-S31 controller
+2× I²S microphone inputs
+16× LED strip outputs
+USB-C connection
+12 V screw-terminal power input
+On-board 12 V → 5 V regulation
+On-board 5 V → 3.3 V regulation
+5 V relay controlled by GPIO38
+Reset button
+Boot button
+Power input protection and filtering
+USB 2.0 connection for programming and communication
 LED Outputs
 
-The controller provides 16 outputs for LED strips:
+The board provides 16 outputs for controlling LED strips:
 
 Output	GPIO
 PWM_1	GPIO2
@@ -46,109 +39,114 @@ PWM_14	GPIO15
 PWM_15	GPIO16
 PWM_16	GPIO17
 
-The outputs are intended to be used by ProjectMM for independently controlling the connected LED strips.
+These outputs are intended to be used by ProjectMM for independently controlling up to 16 LED strips.
 
-Audio
+Audio Input
 
-The board includes two I²S microphone connections, allowing ProjectMM to use audio input for reactive lighting effects.
+Two I²S microphone interfaces are provided for audio-reactive effects.
 
-This makes it possible to build effects based on things such as:
+ProjectMM can use the audio input for effects such as:
 
-Volume
-Bass / low frequencies
-Mid frequencies
-Treble / high frequencies
+Volume response
 Beat detection
-Stereo or dual-channel audio processing
-
-The exact microphone configuration and software support depend on the ProjectMM firmware.
-
+Frequency analysis
+Bass response
+Mid and high-frequency effects
+Stereo/dual-channel processing
 Power
 
-The controller supports two primary power/connection methods.
+The controller supports two power/connection options.
 
-12 V screw terminal
+12 V Screw Terminal
 
-A screw terminal provides the main external power input.
+External 12 V power can be connected through the screw terminal.
 
-The 12 V input passes through protection and regulation circuitry before being converted to the voltages required by the controller and peripherals.
+The board includes input protection and regulation for the required 5 V and 3.3 V rails.
 
 USB-C
 
-USB-C provides an alternative power and USB connection for development and configuration.
+USB-C provides a connection for:
 
-Important: The USB-C and external power input should be treated carefully when powering the board simultaneously. Check the hardware design and intended power configuration before connecting multiple power sources.
+Programming
+USB communication
+Powering the controller during development
 
-Relay
+When using both USB-C and the external 12 V input, make sure the power configuration is suitable for the intended setup.
 
-A 5 V relay is connected to:
+Relay Output
+
+A 5 V relay is controlled through:
 
 GPIO38
 
-The relay can be controlled by ProjectMM and can be used for external 5 V switching applications.
+The relay is driven through a transistor stage, allowing ProjectMM to switch an external load.
 
-The relay interface is isolated from the ESP32 GPIO through the board's transistor driver circuitry.
+Controller
 
-ESP32
+The main MCU is an ESP32-S31, providing the processing and connectivity required for ProjectMM.
 
-The main controller is an ESP32-S3-WROOM-3.
+The controller handles:
 
-It provides:
-
-Wi-Fi
-Bluetooth LE
-USB
-Hardware PWM
-I²S
-Multiple GPIOs
-Sufficient processing power for real-time LED and audio processing
+LED output generation
+Audio acquisition
+Audio-reactive processing
+ProjectMM communication
+Relay control
+USB communication
 ProjectMM
 
-This hardware is intended specifically as a controller platform for ProjectMM.
+This board was designed as a dedicated hardware controller for ProjectMM.
 
-A typical setup is:
+A typical setup looks like:
 
-                 ┌─────────────────────┐
-                 │     ProjectMM       │
-                 │                     │
-                 │     ESP32-S3        │
-                 └──────────┬──────────┘
-                            │
-             ┌──────────────┼──────────────┐
-             │              │              │
-          I²S MIC        I²S MIC       GPIO/PWM
-             │              │              │
-             ▼              ▼              ▼
-          Audio L         Audio R      16 LED Outputs
-                                           │
-                    ┌──────────────────────┼───────┐
-                    ▼       ▼       ▼      ▼       ▼
-                   LED1    LED2    LED3   ...    LED16
+                    ProjectMM
+                        |
+                  ESP32-S31
+                        |
+        +---------------+---------------+
+        |               |               |
+      I²S MIC         I²S MIC        LED Outputs
+        |               |               |
+        +---------------+       +-------+-------+
+                                |       |       |
+                               LED1    LED2    ... LED16
+                        
+                        |
+                     GPIO38
+                        |
+                     5V Relay
+Power Architecture
+12 V Input
+    |
+    +---- Protection
+    |
+    +---- 5 V Regulator ----> 5 V Relay
+    |                     \
+    |                      +--> USB / peripherals
+    |
+    +---- 3.3 V Regulator --> ESP32-S31
 Hardware
 
-The schematic includes:
+The PCB includes:
 
-ESP32-S3-WROOM-3
+ESP32-S31
 USB-C connector
-16 LED control outputs
+16 LED outputs
 Dual I²S microphone interface
-12 V input terminal
-USB-C power input
+12 V screw-terminal input
 5 V buck regulator
 3.3 V regulator
-Relay driver
 5 V relay
+Relay driver circuit
 Reset and Boot buttons
-Input/output filtering
-Power protection
+Input protection
+Power filtering
 Status
 
-🚧 Hardware / ProjectMM controller
+Hardware designed for use with ProjectMM.
 
-This repository contains the hardware design for the ProjectMM controller. Firmware support and additional documentation can be added as the project develops.
+Firmware and ProjectMM integration are developed separately.
 
 Disclaimer
 
-This is a custom hardware design. Verify the power requirements, LED-strip current, connector wiring, and relay load ratings before connecting hardware.
-
-In particular, the controller's 12 V input and the current required by 16 LED strips should be sized appropriately for the intended installation. The PCB should not be assumed to supply the total LED-strip current unless the power path and connectors have been designed for that load.
+Check the required power supply and total LED-strip current before connecting the controller to an installation. The power supply, PCB traces, connectors, and wiring must all be appropriately sized for the connected LED strips.
